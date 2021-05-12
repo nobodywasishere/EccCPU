@@ -55,8 +55,6 @@ class EccCPU_SIM():
         op = instr.split(' ')[0].lower()
         arg1 = ""
         arg2 = ""
-        if instr.split(' ')[0][-1] == ":":
-            pass
         if len(instr.split(' ')) > 1:
             if instr.split(' ')[1].isnumeric():
                 arg1 = int(instr.split(' ')[1].lower())
@@ -122,7 +120,7 @@ class EccCPU_SIM():
             self.ram[self.reg[arg2] % 16] = self.reg[arg1]
         elif (op == "jmp"):
             if arg2 == "" or self.checkFlags(arg2):
-                self.pc = arg1
+                self.pc = self.reg[arg1]
         elif (op == "ldi"):
             self.reg[arg1] = arg2 % 256
         else:

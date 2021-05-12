@@ -12,11 +12,13 @@ fib:
     INC 3
     LDR 1 3
     ADD 1 0
-    JMP end 4
+    LDI 2 end
+    JMP 2 4
     ; break
     INC 3
     STR 1 3
     DEC 3
-    JMP fib
+    LDI 2 fib
+    JMP 2
 end:
     NOP
