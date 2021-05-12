@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-class EccCPUSim():
+class EccCPU_SIM():
     reg = [0,0,0,0]
     ram = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     pc  = 0
@@ -91,7 +91,7 @@ class EccCPUSim():
             self.reg[arg1] = (self.reg[arg1] + self.reg[arg2]) % 256
         elif (op == "sub"):
             self.flags = 0;
-            if self.reg[arg1] + self.reg[arg2] > 255:
+            if self.reg[arg1] + self.reg[arg2] < 255:
                 self.flags = self.flags | flag_bits['carry']
             self.reg[arg1] = (self.reg[arg1] - self.reg[arg2]) % 256
         elif (op == "inc"):
@@ -168,7 +168,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    cpu = EccCPUSim()
+    cpu = EccCPU_SIM()
     if args.step:
         cpu.step = args.step
     if args.file:
