@@ -12,13 +12,13 @@ entity rom is
     port (
         clk  :  in std_logic;
         addr :  in natural range 0 to 2**addr_width - 1 := 0;
-        data : out std_logic_vector (data_width - 1 downto 0) := (others => '0')
+        data : out unsigned(data_width - 1 downto 0) := (others => '0')
     );
 end entity rom;
 
 architecture rtl of rom is
 
-    type rom_type is array ((2** addr_width) - 1 downto 0) of std_logic_vector(data_width - 1 downto 0);
+    type rom_type is array ((2** addr_width) - 1 downto 0) of unsigned(data_width - 1 downto 0);
 
     -- https://vhdlwhiz.com/initialize-ram-from-file/
     impure function init_rom return rom_type is

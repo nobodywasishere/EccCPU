@@ -9,7 +9,7 @@ end entity rom_tb;
 architecture test of rom_tb is
 
     signal clk : std_logic := '0';
-    signal data : std_logic_vector(15 downto 0) := (others => '0');
+    signal data : unsigned(15 downto 0) := (others => '0');
     signal addr : integer := 0;
 
 
