@@ -3,39 +3,28 @@
 class EccCPU_ASM():
     symbols = {}
     code = []
-    bin = []
-    hex = []
-    print = False
+    verbose = False
 
-    def run(self):
+    def assemble(self, code, verbose):
+        self.code = code
+        self.verbose = verbose
         self.findSymbols()
         self.clean()
         line_i = 0
+        bin = []
         for line in self.code:
             op, arg1, arg2 = self.parse(line)
             mach = self.encode(op, arg1, arg2)
-            if self.print:
-                print(f'{mach} {line_i:3}   {line}')
-            self.bin.append(mach)
-        line_i = 0
-        # print(f'IIIIIIIIIII  PHHIHIIIHIIIIIII')
-        for line_i in range(len(self.bin)):
-            # print(f'{self.bin[line_i]}  {self.parity(self.bin[line_i])}')
-            self.bin[line_i] = self.parity(self.bin[line_i])
-            line_i = line_i + 1
-        for line in self.bin:
-            self.hex.append(f'{int(line, 2):04x}')
-
-        if self.print:
-            line_i = 0
-            for line in self.hex:
+            parity = self.parity(mach)
+            hex = f'{int(parity, 2):04x}'
+            if self.verbose:
                 for sym in self.symbols:
                     if line_i == self.symbols[sym]:
                         print(f'      {sym}:')
-                print(line)
-                line_i = line_i + 1
-
-        return self.hex
+                print(f'{hex}    {line}')
+            bin.append(hex)
+            line_i = line_i + 1
+        return bin
 
     def findSymbols(self):
         line_i = 0;
@@ -143,21 +132,18 @@ class EccCPU_ASM():
         out[0] = str(parity)
         return ''.join(out)
 
-    def deparity(self, instr):
-        return []
-        pass
-
 if __name__=="__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', help="assembly infile",required=True)
     parser.add_argument('-o', help="binary outfile", required=True)
+    parser.add_argument('--verbose', action="store_true")
 
     args = parser.parse_args()
 
     asm = EccCPU_ASM()
-    asm.code = open(args.i).read().replace('\r','').split('\n')
-    hex = asm.run()
+    code = open(args.i).read().replace('\r','').split('\n')
+    hex = asm.assemble(code, args.verbose)
 
     open(args.o, 'w+').write('\n'.join(hex))
