@@ -3,24 +3,39 @@
 class EccCPU_ASM():
     symbols = {}
     code = []
-    asm = []
+    bin = []
+    hex = []
+    print = False
 
     def run(self):
         self.findSymbols()
         self.clean()
-        print(f'symbols: {self.symbols}')
-        # print(f'code: {self.code}')
         line_i = 0
         for line in self.code:
-            for sym in self.symbols:
-                if line_i == self.symbols[sym]:
-                    print(f'                {sym}:')
-
             op, arg1, arg2 = self.parse(line)
-            asm = self.encode(op, arg1, arg2)
-            print(f'{asm} {line_i:3}   {line}')
-            self.asm.append(asm)
+            mach = self.encode(op, arg1, arg2)
+            if self.print:
+                print(f'{mach} {line_i:3}   {line}')
+            self.bin.append(mach)
+        line_i = 0
+        # print(f'IIIIIIIIIII  PHHIHIIIHIIIIIII')
+        for line_i in range(len(self.bin)):
+            # print(f'{self.bin[line_i]}  {self.parity(self.bin[line_i])}')
+            self.bin[line_i] = self.parity(self.bin[line_i])
             line_i = line_i + 1
+        for line in self.bin:
+            self.hex.append(f'{int(line, 2):04x}')
+
+        if self.print:
+            line_i = 0
+            for line in self.hex:
+                for sym in self.symbols:
+                    if line_i == self.symbols[sym]:
+                        print(f'      {sym}:')
+                print(line)
+                line_i = line_i + 1
+
+        return self.hex
 
     def findSymbols(self):
         line_i = 0;
@@ -101,18 +116,48 @@ class EccCPU_ASM():
             exit(1)
         return asm
 
-    def parity(self, data_in):
-        return 0
+    def parity(self, instr):
+        # P H H I H I I I H I I I I I I I
+        # MSB                         LSB
+        instr_l = list(instr)
+        instr_l.reverse()
+        out = instr_l[0:7] + ['0'] + instr_l[7:10] + ['0'] + [instr_l[10]] + ['0', '0', '0']
+        out.reverse()
+
+        check = [[3,  5,  7,  9, 11, 13, 15],
+                 [3,  6,  7, 10, 11, 14, 15],
+                 [5,  6,  7, 12, 13, 14, 15],
+                 [9, 10, 11, 12, 13, 14, 15]]
+
+        c = 1
+        for i in check:
+            parity = 0
+            for j in i:
+                parity = parity ^ int(out[j])
+            out[c] = str(parity)
+            c = c*2
+
+        parity = 0
+        for i in out:
+            parity = parity ^ int(i)
+        out[0] = str(parity)
+        return ''.join(out)
+
+    def deparity(self, instr):
+        return []
+        pass
 
 if __name__=="__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', required=True)
-    parser.add_argument('-o', required=True)
+    parser.add_argument('-i', help="assembly infile",required=True)
+    parser.add_argument('-o', help="binary outfile", required=True)
 
     args = parser.parse_args()
 
     asm = EccCPU_ASM()
     asm.code = open(args.i).read().replace('\r','').split('\n')
-    asm.run()
+    hex = asm.run()
+
+    open(args.o, 'w+').write('\n'.join(hex))
