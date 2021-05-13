@@ -20,8 +20,8 @@ class EccCPU_ASM():
             if self.verbose:
                 for sym in self.symbols:
                     if line_i == self.symbols[sym]:
-                        print(f'      {sym}:')
-                print(f'{hex}    {line}')
+                        print(f'           {sym}:')
+                print(f'{int(mach,2):03x}  {hex}    {line}')
             bin.append(hex)
             line_i = line_i + 1
         while (line_i < 256):
@@ -109,12 +109,8 @@ class EccCPU_ASM():
         return asm
 
     def parity(self, instr):
-        # P H H I H I I I H I I I I I I I
-        # MSB                         LSB
         instr_l = list(instr)
-        instr_l.reverse()
-        out = instr_l[0:7] + ['0'] + instr_l[7:10] + ['0'] + [instr_l[10]] + ['0', '0', '0']
-        out.reverse()
+        out = ['0', '0', '0'] + instr_l[0:1] + ['0'] + instr_l[1:4] + ['0'] + instr_l[4:]
 
         check = [[3,  5,  7,  9, 11, 13, 15],
                  [3,  6,  7, 10, 11, 14, 15],
@@ -124,15 +120,15 @@ class EccCPU_ASM():
         c = 1
         for i in check:
             parity = 0
-            for j in i:
-                parity = parity ^ int(out[j])
-            out[c] = str(parity)
+            num = out[i[0]] + out[i[1]] + out[i[2]] + out[i[3]]
+            out[c] = '0' if num.count('1') % 2 == 1 else '1'
             c = c*2
 
         parity = 0
         for i in out:
             parity = parity ^ int(i)
         out[0] = str(parity)
+        out.reverse()
         return ''.join(out)
 
 if __name__=="__main__":
