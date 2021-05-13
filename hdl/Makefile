@@ -13,8 +13,8 @@ rom: clean
 	${GHDL_R} rom_tb --wave=rom.ghw
 
 cpu: clean
-	${GHDL_A} rom.vhdl hamming.vhdl cpu.vhdl
-	${GHDL_R} cpu --wave=cpu.ghw
+	${GHDL_A} rom.vhdl hamming.vhdl cpu.vhdl cpu_tb.vhdl
+	${GHDL_R} cpu_tb --wave=cpu.ghw
 
 clean:
 	@echo -en "$(BLUEBOLD)==== Cleaning ====$(NC)\n"
