@@ -28,7 +28,7 @@ class EccCPU_SIM():
                 print(e)
                 exit(1)
             if self.step or line == ";break":
-                self.printInfo()
+                self.printInfo(instr=line)
                 input(": ")
         self.printInfo()
 
@@ -147,7 +147,9 @@ class EccCPU_SIM():
         else:
             return False
 
-    def printInfo(self):
+    def printInfo(self, instr=""):
+        if instr != "":
+            print(f"INS: {instr}")
         print(f"PC:  {self.pc:08b}")
         print(f"FLG: {self.flags:08b}\n"
                "     <>=<>cnz")
