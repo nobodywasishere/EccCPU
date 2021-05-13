@@ -24,6 +24,9 @@ class EccCPU_ASM():
                 print(f'{hex}    {line}')
             bin.append(hex)
             line_i = line_i + 1
+        while (line_i < 256):
+            bin.append("0000")
+            line_i = line_i + 1
         return bin
 
     def findSymbols(self):
