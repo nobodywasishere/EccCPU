@@ -14,7 +14,11 @@ rom: clean
 
 cpu: clean
 	${GHDL_A} rom.vhdl hamming.vhdl cpu.vhdl cpu_tb.vhdl
-	${GHDL_R} cpu_tb --wave=cpu.ghw
+	${GHDL_R} cpu_tb --wave=cpu.ghw --stop-time=100ns
+
+hamming: clean
+	${GHDL_A} hamming.vhdl hamming_tb.vhdl
+	${GHDL_R} hamming_tb --wave=hamming.ghw
 
 clean:
 	@echo -en "$(BLUEBOLD)==== Cleaning ====$(NC)\n"

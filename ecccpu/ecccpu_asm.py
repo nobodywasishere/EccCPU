@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import hamming_codec as hc
+
 class EccCPU_ASM():
     symbols = {}
     code = []
@@ -22,6 +24,7 @@ class EccCPU_ASM():
                     if line_i == self.symbols[sym]:
                         print(f'           {sym}:')
                 print(f'{int(mach,2):03x}  {hex}    {line}')
+                # print(f'{mach}  {int(hex,16):016b}    {line}')
             bin.append(hex)
             line_i = line_i + 1
         while (line_i < 256):
@@ -109,26 +112,11 @@ class EccCPU_ASM():
         return asm
 
     def parity(self, instr):
-        instr_l = list(instr)
-        out = ['0', '0', '0'] + instr_l[0:1] + ['0'] + instr_l[1:4] + ['0'] + instr_l[4:]
-
-        check = [[3,  5,  7,  9, 11, 13, 15],
-                 [3,  6,  7, 10, 11, 14, 15],
-                 [5,  6,  7, 12, 13, 14, 15],
-                 [9, 10, 11, 12, 13, 14, 15]]
-
-        c = 1
-        for i in check:
-            parity = 0
-            num = out[i[0]] + out[i[1]] + out[i[2]] + out[i[3]]
-            out[c] = '0' if num.count('1') % 2 == 1 else '1'
-            c = c*2
-
+        out = list(str(hc.encode(int(instr,2),11)))
         parity = 0
-        for i in out:
+        for i in list(out):
             parity = parity ^ int(i)
-        out[0] = str(parity)
-        out.reverse()
+        out.append(str(parity))
         return ''.join(out)
 
 if __name__=="__main__":
