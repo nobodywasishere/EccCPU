@@ -9,6 +9,7 @@ class EccCPU_SIM():
     step = False
     code = []
     symbols = {}
+    instr_limit = 1024
 
     flag_bits = {'zero': 1, 'neg': 2, 'carry': 4,
                  '>u':  8, '<u':  16, '=': 32,
@@ -17,8 +18,10 @@ class EccCPU_SIM():
     def run(self):
         self.clean()
         self.findSymbols()
+        count = 0
         # for line in self.code:
-        while self.pc < len(code) - 1:
+        while self.pc < len(code) - 1 and count < instr_limit:
+            count = count + 1
             line = self.code[self.pc]
             try:
                 # print(f"{self.pc:3d}: {line}")
@@ -142,7 +145,7 @@ class EccCPU_SIM():
             return True
         elif arg2 == 2 and ((self.flags & self.flag_bits['neg']) == 2):
             return True
-        elif arg2 == 4 and ((self.flags & self.flag_bits['carry']) == 4):
+        elif arg2 == 3 and ((self.flags & self.flag_bits['carry']) == 4):
             return True
         else:
             return False

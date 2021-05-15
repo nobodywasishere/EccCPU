@@ -13,7 +13,7 @@ fib:
     LDR 1 3
     ADD 1 0
     LDI 2 end
-    JMP 2 4
+    JMP 2 3
     ; break
     INC 3
     STR 1 3
@@ -21,4 +21,4 @@ fib:
     LDI 2 fib
     JMP 2
 end:
-    NOP
+    JMP 2
