@@ -71,15 +71,12 @@ begin
     begin
         if (rising_edge(clk)) then
             pc <= pc + '1';
-            flags <= (others => '0');
             if (instr_dec(10) = '1') then
                 reg(to_integer(instr_dec(9 downto 8))) <= instr_dec(7 downto 0);
             elsif (instr_dec(10 downto 8) = "001") then -- ALU
                 alu_operation <= instr_dec(7 downto 4);
                 alu_arg1 <= reg(to_integer(instr_dec(3 downto 2)));
                 alu_arg2 <= reg(to_integer(instr_dec(1 downto 0)));
-                flags <= alu_flags;
-                reg(to_integer(instr_dec(3 downto 2))) <= alu_result;
             elsif (instr_dec(10 downto 8) = "010") then -- RAM / REG
                 case instr_dec(3 downto 2) is
                     when "00" => -- LDD
@@ -89,15 +86,70 @@ begin
                     when "10" => -- STD
                         ram(to_integer(instr_dec(7 downto 4))) <= reg(to_integer(instr_dec(1 downto 0)));
                     when "11" => -- STR
-                        ram(to_integer(reg(to_integer(instr_dec(5 downto 4))))) <= reg(to_integer(instr_dec(1 downto 0)));
+                        ram(to_integer(reg(to_integer(instr_dec(5 downto 4)))) rem 16) <= reg(to_integer(instr_dec(1 downto 0)));
                     when others =>
                 end case;
             elsif (instr_dec(10 downto 8) = "011") then
                 case instr_dec(7 downto 4) is
-                    when "0000" =>
+                    when "0000" => -- any
                         pc <= reg(to_integer(instr_dec(1 downto 0)));
+                    when "0001" => -- zero
+                        if (flags(FLAG_Z) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
+                    when "0010" => -- negative
+                        if (flags(FLAG_N) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
+                    when "0011" => -- carry
+                        if (flags(FLAG_C) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
+                    when "0100" => -- > unsigned
+                        if (flags(FLAG_UGT) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
+                    when "0101" => -- < unsigned
+                        if (flags(FLAG_ULT) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
+                    when "0110" => -- >= unsigned
+                        if (flags(FLAG_UGT) = '1' or flags(FLAG_EQ) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
+                    when "0111" => -- <= unsigned
+                        if (flags(FLAG_ULT) = '1' or flags(FLAG_EQ) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
+                    when "1000" => -- equal
+                        if (flags(FLAG_EQ) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
+                    when "1100" => -- > signed
+                        if (flags(FLAG_SGT) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
+                    when "1101" => -- < signed
+                        if (flags(FLAG_SLT) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
+                    when "1110" => -- >= signed
+                        if (flags(FLAG_SGT) = '1' or flags(FLAG_EQ) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
+                    when "1111" => -- <= signed
+                        if (flags(FLAG_SLT) = '1' or flags(FLAG_EQ) = '1') then
+                            pc <= reg(to_integer(instr_dec(1 downto 0)));
+                        end if;
                     when others =>
                 end case;
+            end if;
+        end if;
+
+        if (falling_edge(clk)) then
+            if (instr_dec(10 downto 8) = "001") then
+                flags <= alu_flags;
+                reg(to_integer(instr_dec(3 downto 2))) <= alu_result;
             end if;
         end if;
     end process;

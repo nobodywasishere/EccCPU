@@ -14,7 +14,7 @@ begin
     cpu1: entity work.cpu(rtl) port map(clk);
 
     process begin
-        for I in 0 to 20 loop
+        for I in 0 to 2000 loop
             clk <= '1';
             wait for 1 ns;
             clk <= '0';
