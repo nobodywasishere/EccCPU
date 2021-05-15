@@ -11,7 +11,7 @@ entity rom is
     );
     port (
         clk  :  in std_logic;
-        addr :  in natural range 0 to 2**addr_width - 1 := 0;
+        addr :  in unsigned(addr_width - 1 downto 0) := (others => '0');
         data : out unsigned(data_width - 1 downto 0) := (others => '0')
     );
 end entity rom;
@@ -26,10 +26,11 @@ architecture rtl of rom is
         variable text_line : line;
         variable ram_content : rom_type;
     begin
-        for i in 0 to 2**addr_width - 1 loop
+        for i in 0 to (2**addr_width) - 2 loop
             readline(text_file, text_line);
             hread(text_line, ram_content(i));
         end loop;
+
         return ram_content;
     end function;
 
@@ -39,7 +40,7 @@ begin
 
     process (clk) begin
         if (rising_edge(clk)) then
-            data <= rom_data(addr);
+            data <= rom_data(to_integer(addr));
         end if;
     end process;
 

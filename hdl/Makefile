@@ -20,6 +20,11 @@ hamming: clean
 	${GHDL_A} hamming.vhdl hamming_tb.vhdl
 	${GHDL_R} hamming_tb --wave=hamming.ghw
 
+synth:
+	${GHDL_A} rom.vhdl hamming.vhdl cpu.vhdl
+	yosys -q -p 'ghdl --std=08 rom'
+	yosys -q -p 'ghdl --std=08 cpu'
+
 clean:
 	@echo -en "$(BLUEBOLD)==== Cleaning ====$(NC)\n"
 	-@rm *.cf *.ghw

@@ -26,7 +26,12 @@ architecture rtl of cpu is
 
 begin
 
-    rom1: entity work.rom(rtl) port map(clk, to_integer(pc), instr);
+    rom1: entity work.rom(rtl)
+    port map (
+        clk => clk,
+        addr => pc,
+        data => instr
+    );
     hammd1: entity work.hamming_detect(synth)
     port map (
         data_in => instr,
