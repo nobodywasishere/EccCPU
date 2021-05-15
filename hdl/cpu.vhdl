@@ -32,6 +32,9 @@ architecture rtl of cpu is
     signal error_location : unsigned(3 downto 0) := (others => '0');
     signal error_double : std_logic := '0';
 
+    signal alu_operation : unsigned(3 downto 0) := (others => '0');
+    signal alu_arg1, alu_arg2, alu_result, alu_flags : unsigned(7 downto 0) := (others => '0');
+
 begin
 
     rom1: entity work.rom(rtl)
@@ -53,6 +56,15 @@ begin
         data_out => instr_dec
     );
 
+    alu1: entity work.alu(rtl)
+    port map (
+        operation => alu_operation,
+        arg1 => alu_arg1,
+        arg2 => alu_arg2,
+        result => alu_result,
+        flags => alu_flags
+    );
+
 
     process (clk)
         variable arg1, arg2 : unsigned(7 downto 0) := (others => '0');
@@ -63,59 +75,17 @@ begin
             if (instr_dec(10) = '1') then
                 reg(to_integer(instr_dec(9 downto 8))) <= instr_dec(7 downto 0);
             elsif (instr_dec(10 downto 8) = "001") then -- ALU
-                case instr_dec(7 downto 4) is
-                    when "0000" => -- AND
-                        reg(to_integer(instr_dec(3 downto 2))) <= reg(to_integer(instr_dec(3 downto 2))) and reg(to_integer(instr_dec(1 downto 0)));
-                    when "0001" => -- OR
-                        reg(to_integer(instr_dec(3 downto 2))) <= reg(to_integer(instr_dec(3 downto 2))) or reg(to_integer(instr_dec(1 downto 0)));
-                    when "0010" => -- ADD
-                        reg(to_integer(instr_dec(3 downto 2))) <= reg(to_integer(instr_dec(3 downto 2))) + reg(to_integer(instr_dec(1 downto 0)));
-                        if ('0' & reg(to_integer(instr_dec(3 downto 2))) + '0' & reg(to_integer(instr_dec(1 downto 0))) > 9d"255") then
-                            flags(FLAG_C) <= '1';
-                        end if;
-                    when "0011" => -- SUB
-                        reg(to_integer(instr_dec(3 downto 2))) <= reg(to_integer(instr_dec(3 downto 2))) - reg(to_integer(instr_dec(1 downto 0)));
-                        if ('0' & reg(to_integer(instr_dec(3 downto 2))) - '0' & reg(to_integer(instr_dec(1 downto 0))) > 9d"255") then
-                            flags(FLAG_C) <= '1';
-                        end if;
-                    when "0100" => -- INC
-                        reg(to_integer(instr_dec(1 downto 0))) <= reg(to_integer(instr_dec(1 downto 0))) + '1';
-                    when "0101" => -- DEC
-                        reg(to_integer(instr_dec(1 downto 0))) <= reg(to_integer(instr_dec(1 downto 0))) - '1';
-                    when "1000" => -- CMP
-                        arg1 := reg(to_integer(instr_dec(3 downto 2)));
-                        arg2 := reg(to_integer(instr_dec(1 downto 0)));
-                        if (arg1 > arg2) then
-                            flags(FLAG_UGT) <= '1';
-                        end if;
-                        if (arg1 < arg2) then
-                            flags(FLAG_ULT) <= '1';
-                        end if;
-                        if (arg1 = arg2) then
-                            flags(FLAG_EQ) <= '1';
-                        end if;
-                        if (arg1(7) = arg2(7)) then
-                            if (arg1(6 downto 0) > arg2(6 downto 0)) then
-                                flags(FLAG_SGT) <= '1';
-                            end if;
-                            if (arg1(6 downto 0) < arg2(6 downto 0)) then
-                                flags(FLAG_SLT) <= '1';
-                            end if;
-                        else
-                            if (arg1(7) < arg2(7)) then
-                                flags(FLAG_SGT) <= '1';
-                            else
-                                flags(FLAG_SLT) <= '1';
-                            end if;
-                        end if;
-                    when others =>
-                end case;
+                alu_operation <= instr_dec(7 downto 4);
+                alu_arg1 <= reg(to_integer(instr_dec(3 downto 2)));
+                alu_arg2 <= reg(to_integer(instr_dec(1 downto 0)));
+                flags <= alu_flags;
+                reg(to_integer(instr_dec(3 downto 2))) <= alu_result;
             elsif (instr_dec(10 downto 8) = "010") then -- RAM / REG
                 case instr_dec(3 downto 2) is
                     when "00" => -- LDD
                         reg(to_integer(instr_dec(1 downto 0))) <= ram(to_integer(instr_dec(7 downto 4)));
                     when "01" => -- LDR
-                        reg(to_integer(instr_dec(1 downto 0))) <= ram(to_integer(reg(to_integer(instr_dec(5 downto 4)))));
+                        reg(to_integer(instr_dec(1 downto 0))) <= ram(to_integer(reg(to_integer(instr_dec(5 downto 4)))) rem 16);
                     when "10" => -- STD
                         ram(to_integer(instr_dec(7 downto 4))) <= reg(to_integer(instr_dec(1 downto 0)));
                     when "11" => -- STR

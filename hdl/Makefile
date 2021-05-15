@@ -13,12 +13,16 @@ rom: clean
 	${GHDL_R} rom_tb --wave=rom.ghw
 
 cpu: clean
-	${GHDL_A} rom.vhdl hamming.vhdl cpu.vhdl cpu_tb.vhdl
+	${GHDL_A} rom.vhdl hamming.vhdl alu.vhdl cpu.vhdl cpu_tb.vhdl
 	${GHDL_R} cpu_tb --wave=cpu.ghw --stop-time=100ns
 
 hamming: clean
 	${GHDL_A} hamming.vhdl hamming_tb.vhdl
 	${GHDL_R} hamming_tb --wave=hamming.ghw
+
+alu: clean
+	${GHDL_A} alu.vhdl alu_tb.vhdl
+	${GHDL_R} alu_tb --wave=alu.ghw
 
 synth:
 	${GHDL_A} rom.vhdl hamming.vhdl cpu.vhdl
