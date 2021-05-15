@@ -89,7 +89,7 @@ class EccCPU_SIM():
             self.reg[arg1] = (self.reg[arg1] + self.reg[arg2]) % 256
         elif (op == "sub"):
             self.flags = 0;
-            if self.reg[arg1] + self.reg[arg2] < 255:
+            if self.reg[arg1] - self.reg[arg2] < 255:
                 self.flags = self.flags | flag_bits['carry']
             self.reg[arg1] = (self.reg[arg1] - self.reg[arg2]) % 256
         elif (op == "inc"):

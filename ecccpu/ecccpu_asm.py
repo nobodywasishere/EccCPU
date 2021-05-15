@@ -86,9 +86,9 @@ class EccCPU_ASM():
         elif (op == "sub"):
             asm = f'0010011{arg1:02b}{arg2:02b}'
         elif (op == "inc"):
-            asm = f'001010000{arg1:02b}'
+            asm = f'0010100{arg1:02b}00'
         elif (op == "dec"):
-            asm = f'001010100{arg1:02b}'
+            asm = f'0010101{arg1:02b}00'
         elif (op == "cmp"):
             asm = f'0011000{arg1:02b}{arg2:02b}'
         elif (op == "ldd"):
