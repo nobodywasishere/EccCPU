@@ -2,3 +2,6 @@ __pycache__
 work-obj*
 *.bin
 *.ghw
+*.asc
+*.json
+*.cf

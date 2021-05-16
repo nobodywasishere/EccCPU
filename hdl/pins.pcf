@@ -1,0 +1,17 @@
+set_io clk 28
+set_io cpu_out[0] 6
+set_io cpu_out[1] 44
+set_io cpu_out[2] 4
+set_io cpu_out[3] 3
+set_io cpu_out[4] 45
+set_io cpu_out[5] 47
+set_io cpu_out[6] 46
+set_io cpu_out[7] 2
+set_io cpu_in[0] 38
+set_io cpu_in[1] 42
+set_io cpu_in[2] 36
+set_io cpu_in[3] 43
+set_io cpu_in[4] 34
+set_io cpu_in[5] 37
+set_io cpu_in[6] 31
+set_io cpu_in[7] 35

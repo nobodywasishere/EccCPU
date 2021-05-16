@@ -28,8 +28,10 @@ alu: clean
 
 synth:
 	${GHDL_A} ${SRC_DIR}/rom.vhdl ${SRC_DIR}/hamming.vhdl ${SRC_DIR}/alu.vhdl ${SRC_DIR}/cpu.vhdl
-	yosys -q -p 'ghdl --std=08 rom'
-	yosys -q -p 'ghdl --std=08 cpu'
+	yosys -q -p 'ghdl --std=08 cpu; synth_ice40 -json cpu.json'
+	nextpnr-ice40 --up5k --package sg48 --pcf "pins.pcf" --asc "cpu.asc" --json "cpu.json"
+	icepack "cpu.asc" "cpu.bin"
+	iceprog cpu.bin
 
 clean:
 	@echo -en "$(BLUEBOLD)==== Cleaning ====$(NC)\n"
