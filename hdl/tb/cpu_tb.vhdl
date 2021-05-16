@@ -11,7 +11,7 @@ architecture test of cpu_tb is
     signal clk : std_logic := '0';
 
 begin
-    cpu1: entity work.cpu(rtl) port map(clk);
+    cpu1: entity work.cpu(rtl) port map(clk, (others => '0'), open);
 
     process begin
         for I in 0 to 2000 loop

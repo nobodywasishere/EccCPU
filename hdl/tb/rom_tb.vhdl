@@ -10,7 +10,7 @@ architecture test of rom_tb is
 
     signal clk : std_logic := '0';
     signal data : unsigned(15 downto 0) := (others => '0');
-    signal addr : integer := 0;
+    signal addr : unsigned(7 downto 0) := (others => '0');
 
 
 begin
@@ -22,7 +22,7 @@ begin
             clk <= '1';
             wait for 1 ns;
             report "data: " & to_string(data);
-            addr <= addr + 1;
+            addr <= addr + '1';
             clk <= '0';
             wait for 1 ns;
         end loop;
