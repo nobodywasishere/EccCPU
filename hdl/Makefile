@@ -33,6 +33,16 @@ synth:
 	icepack "cpu.asc" "cpu.bin"
 	iceprog cpu.bin
 
+svg: clean
+	-mkdir svg
+	${GHDL_A} ${SRC_DIR}/rom.vhdl ${SRC_DIR}/hamming.vhdl ${SRC_DIR}/alu.vhdl ${SRC_DIR}/cpu.vhdl
+	for entity in rom cpu hamming_detect hamming_correct alu; do \
+		yosys -q -p "ghdl --std=08 $$entity; prep -top $$entity; write_json -compat-int svg/$$entity.json"; \
+		netlistsvg svg/$$entity.json -o svg/$$entity.svg; \
+	done
+
 clean:
 	@echo -en "$(BLUEBOLD)==== Cleaning ====$(NC)\n"
 	-@rm *.cf *.ghw
+
+.PHONY: svg
