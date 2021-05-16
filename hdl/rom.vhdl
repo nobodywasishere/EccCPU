@@ -26,7 +26,7 @@ architecture rtl of rom is
         variable text_line : line;
         variable ram_content : rom_type;
     begin
-        for i in 0 to (2**addr_width) - 2 loop
+        for i in 0 to (2**addr_width) - 1 loop
             readline(text_file, text_line);
             hread(text_line, ram_content(i));
         end loop;

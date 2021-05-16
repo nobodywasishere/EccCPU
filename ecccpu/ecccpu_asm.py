@@ -133,4 +133,4 @@ if __name__=="__main__":
     code = open(args.i).read().replace('\r','').split('\n')
     hex = asm.assemble(code, args.verbose)
 
-    open(args.o, 'w+').write('\n'.join(hex))
+    open(args.o, 'w+').write('\n'.join(hex)+'\n')
