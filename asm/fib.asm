@@ -4,8 +4,10 @@ main:
     LDI 2 fib
     LDI 3 0
     STR 0 3
+    STD 0 14
     INC 3
     STR 1 3
+    STD 1 14
     DEC 3
 fib:
     LDR 0 3
@@ -17,6 +19,7 @@ fib:
     ; break
     INC 3
     STR 1 3
+    STD 1 14
     DEC 3
     LDI 2 fib
     JMP 2
