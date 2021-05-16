@@ -20,7 +20,7 @@ class EccCPU_SIM():
         self.findSymbols()
         count = 0
         # for line in self.code:
-        while self.pc < len(code) - 1 and count < instr_limit:
+        while self.pc < len(code) - 1 and count < self.instr_limit:
             count = count + 1
             line = self.code[self.pc]
             try:
